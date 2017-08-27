@@ -1,0 +1,130 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<!--
+<ul class="inline">
+  <li ng-if="resuletList.length == 0">{{"memberClass.list" | translate}}{{"common.empty" | translate}}.</li>
+  <li ng-if="resuletList.length >= 0">{{"memberClass.list" | translate}}:{{resuletList.length}}.</li>
+</ul>
+-->
+<!--     <div class="col-sm-3 col-xs-12 col-lg-3">
+      <form class="form-search">
+          <div class="input-group">
+              <input type="text" class="form-control " placeholder='{{"common.search" | translate}}...' ng-model="query">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-search">{{"common.search" | translate}}</button>
+              </span>
+          </div>
+      </form>
+    </div> -->
+    <div modal="entityAdd">
+     <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th ng-repeat="header in headers">{{ headers[$index] | translate | capitalise }}</th>
+        </tr>
+      </thead>
+      <tbody>
+      <div class="form-group">
+        <tr>
+            <td><input style="text-align: right"  type="text" ng-model="activities[0].alias"></td>
+            <td>
+              <div class="input-group"> 一件<input style="width:50px; text-align: right"  type="text" ng-model="activities[0].config[0]">折，两件<input style="width:50px; text-align: right"  type="text" ng-model="activities[0].config[1]">折，两件以上<input style="width:50px; text-align: right"  type="text" ng-model="activities[0].config[2]">折.
+              </div>
+            </td>
+            <td></td>
+            <td>
+              <label class="control checkbox">
+                   <input type="checkbox" id="duplicated_0" ng-checked="activities[0].duplicated">
+                   <span class="checkbox-label"> </span>
+              </label>
+            </td>
+            <td>
+              <label class="control checkbox">
+                 <input type="checkbox" id="status_0" ng-modal="activities[0].status" ng-checked="activities[0].status">
+                 <span class="checkbox-label"> 有效</span>
+              </label>
+            </td>
+            <td>
+              <a class="btn btn-warning" ng-click="update(0, activities[0])"><i class="glyphicon-pencil glyphicon"></i> {{"common.update" | translate}}</a>
+            </td>
+        </tr>
+        <tr>
+            <td><input style="text-align: right"  type="text" ng-model="activities[1].alias"></td>
+            <td>
+            <div  class="input-group">
+              买满<input style="width:50px; text-align: right"  type="text" ng-model="activities[1].config[0]">元，减少
+              <input style="width:50px; text-align: right" type="text" ng-model="activities[1].config[1]">元,
+              <div>
+            </td>
+            <td>
+              <label class="control checkbox">
+                 <input type="checkbox"  id="repeatable_1" ng-modal="activities[1].repeatable" ng-checked="activities[1].repeatable">
+                 <span class="checkbox-label"> </span>
+              </label>
+            </td>
+            <td>
+              <label class="control checkbox">
+                 <input type="checkbox" id="duplicated_1" ng-checked="activities[1].duplicated">
+                 <span class="checkbox-label"> </span>
+              </label>
+            </td>
+            <td>
+              <label class="control checkbox">
+                   <input type="checkbox" id="status_1" ng-modal="activities[1].status" ng-checked="activities[1].status">
+                   <span class="checkbox-label"> 有效</span>
+              </label>
+            </td>
+            <td>
+              <a class="btn btn-warning" ng-click="update(1, activities[1])"><i class="glyphicon-pencil glyphicon"></i> {{"common.update" | translate}}</a>
+            </td>
+        </tr>
+        <tr>
+            <td><input style=" text-align: right"  type="text" ng-model="activities[2].alias"></td>
+            <td>
+            <div  class="input-group">
+            买满<input style="width:50px; text-align: right"  type="text" ng-model="activities[2].config[0]">件，增送<input style="width:50px; text-align: right"  type="text" ng-model="activities[2].config[1]">件.
+            </div>
+            </td>
+            <td>
+              <label class="control checkbox">
+                   <input type="checkbox" id="repeatable_2" ng-checked="activities[2].repeatable">
+                   <span class="checkbox-label"> </span>
+              </label>
+            </td>
+            <td>
+              <label class="control checkbox">
+                   <input type="checkbox" id="duplicated_2" ng-checked="activities[2].duplicated">
+                   <span class="checkbox-label"> </span>
+              </label>
+            </td>
+            <td>
+              <label class="control checkbox">
+                   <input type="checkbox" id="status_2" ng-checked="activities[2].status">
+                   <span class="checkbox-label"> 有效</span>
+              </label>
+            </td>
+            <td>
+              <a class="btn btn-warning" ng-click="update(2, activities[2])"><i class="glyphicon-pencil glyphicon"></i> {{"common.update" | translate}}</a>
+            </td>
+        </tr>
+      </tbody>
+      </div>
+    </table>
+    </form>
+    </div>
+
+
+  <!-- delete contact modal -->
+  <script type="text/ng-template" id="messageModal" />
+    <div modal="entityMessage">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+            {{ message }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-info ok" ng-click="closeMessage()">{{"common.ok" | translate}}</button>
+      </div>
+    </div>
+  </script>

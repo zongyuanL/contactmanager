@@ -1,0 +1,173 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<!--
+<ul class="inline">
+  <li ng-if="resuletList.length == 0">{{"memberClass.list" | translate}}{{"common.empty" | translate}}.</li>
+  <li ng-if="resuletList.length >= 0">{{"memberClass.list" | translate}}:{{resuletList.length}}.</li>
+</ul>
+-->
+    <div class="col-sm-3 col-xs-12 col-lg-3">
+      <form class="form-search">
+          <div class="input-group">
+              <input type="text" class="form-control " placeholder='{{"common.search" | translate}}...' ng-model="query">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-search">{{"common.search" | translate}}</button>
+              </span>
+          </div>
+      </form>
+    </div>
+<table class="table table-hover" ng-show="resuletList.length >= 1" >
+  <thead>
+    <tr>
+      <th ng-repeat="header in headers"><a ng-click="columnSort.sortColumn=headers[$index];columnSort.reverse=!columnSort.reverse">{{ headers[$index] | translate | capitalise }}</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="claz in resuletList |  orderBy:columnSort.sortColumn:columnSort.reverse | filter: query">
+        <td>{{ claz.name }}</td>
+        <td>{{ claz.required_sum_of_consumption }} </td>
+        <td>{{ claz.discount | percent}}</td>
+        <td>
+            <p ng-if="claz.activity">{{"common.valid" | translate}}</p>
+            <p ng-if="claz.activity==false">{{"common.invalid" | translate}}</p>
+        </td>
+        <td>
+          <a class="btn btn-info" ng-click="view(claz)"><i class="glyphicon-eye-open glyphicon"></i> {{"common.view" | translate}}</a>
+          <a class="btn btn-warning" ng-click="edit(claz)"><i class="glyphicon-pencil glyphicon"></i> {{"common.edit" | translate}}</a>
+          <a class="btn btn-danger"  ng-click="delete(claz)"><i class="glyphicon-trash glyphicon"></i> {{"common.delete" | translate}}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+
+  <!-- add claz modal -->
+
+  <script type="text/ng-template" id="addModal" />
+   <div modal="entityAdd">
+      <div class="modal-header">
+          <h3>{{ "common.add" | translate }}{{ "common.one" | translate}}{{ modalName | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{"memberClass.name" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.add.name" name="inputName" placeholder='{{"memberClass.name" | translate}}'>
+                  <div class="error col-sm-6" ng-messages="addForm.inputName.$error" style="color:red;">
+                      <div ng-message="required">用户名不能为空</div>
+                  </div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputConsumption">{{"memberClass.consumption" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputConsumption" ng-model="form.add.required_sum_of_consumption" name="Consumption" placeholder='{{"memberClass.consumption" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputDiscount">{{"memberClass.discount" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputDiscount" ng-model="form.add.discount" name="discount" placeholder='{{"memberClass.discount" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputActivity">{{"memberClass.activity" | translate}}:</label>
+            <div class="col-sm-6">
+              <select name="activity" id="inputActivity" class="form-control" ng-model="form.add.activity" ng-options="a.key as a.value for a in activities">
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-click="addEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.add" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+   </div>
+  </script>
+
+  <!-- view contact modal -->
+  <script type="text/ng-template" id="viewModal" />
+    <div modal="entityView">
+      <div class="modal-header">
+          <h3>{{ entity.name }}</h3>
+      </div>
+      <div class="modal-body">
+
+        <dl class="dl-horizontal">
+            <dt>{{ modalId + ".name" | translate | capitalise}}:</dt>
+            <dd>{{ entity.name }}</dd>
+            <dt>{{ modalId + ".consumption" | translate | capitalise}}:</dt>
+            <dd>{{ entity.required_sum_of_consumption || " - " }}</dd>
+            <dt>{{ modalId + ".discount" | translate | capitalise}}:</dt>
+            <dd>{{ entity.discount | percent}}</dd>
+            <dt>{{ "common.status" | translate | capitalise}}:</dt>
+            <dd><p ng-if="entity.activity">{{"common.valid" | translate}}</p>
+            <p ng-if="entity.activity==false">{{"common.invalid" | translate}}</p></dd>
+        </dl>
+
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-warning cancel" ng-click="close()">{{"common.close" | translate}}</button>
+      </div>
+    </div>
+  </script>
+
+  <!-- edit contact modal -->
+  <script type="text/ng-template" id="editModal" />
+    <div modal="entityEdit">
+      <div class="modal-header">
+          <h3>{{"common.edit" | translate}} - {{ name }}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{"memberClass.name" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" ng-model="form.edit.name" name="name" placeholder='{{"memberClass.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputConsumption">{{"memberClass.consumption" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputConsumption" ng-model="form.edit.required_sum_of_consumption" name='{{"memberClass.consumption" | translate}}' placeholder="consumption">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputDiscount">{{"memberClass.discount" | translate}}:</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputDiscount" ng-model="form.edit.discount" name="discount" placeholder='{{"memberClass.discount" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputActivity">{{"memberClass.activity" | translate}}:</label>
+            <div class="col-sm-6">
+              <select name="activity" id="inputActivity" class="form-control" ng-model="form.edit.activity" ng-options="a.key as a.value for a in activities">
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-click="editEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.edit" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+      </div>
+    </div>
+  </script>
+  <!-- delete contact modal -->
+  <script type="text/ng-template" id="deleteModal" />
+    <div modal="entityDelete">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{"common.confirm_to_delete" | translate}} {{ name }}?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger ok" ng-click="deleteEntity()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+  </div>
+</script>

@@ -1,0 +1,261 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<!--
+<ul class="inline">
+  <li ng-if="resuletList.length == 0">{{"memberClass.list" | translate}}{{"common.empty" | translate}}.</li>
+  <li ng-if="resuletList.length >= 0">{{"memberClass.list" | translate}}:{{resuletList.length}}.</li>
+</ul>
+-->
+    <div class="col-sm-3 col-xs-12 col-lg-3">
+      <form class="form-search">
+          <div class="input-group">
+              <input type="text" class="form-control " placeholder='{{"common.search" | translate}}...' ng-model="query">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-search">{{"common.search" | translate}}</button>
+              </span>
+          </div>
+      </form>
+    </div>
+<table class="table table-hover" ng-show="resuletList.length >= 1" >
+  <thead>
+    <tr>
+      <th ng-repeat="header in headers"><a ng-click="columnSort.sortColumn=headers[$index];columnSort.reverse=!columnSort.reverse">{{ headers[$index] | translate | capitalise }}</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="claz in resuletList |  orderBy:columnSort.sortColumn:columnSort.reverse | filter: query">
+        <td>{{ claz.artic_number }}</td>
+        <td>{{ claz.name }} </td>
+        <td>{{ claz.vendors.name}}</td>
+        <td>{{ claz.price}}</td>
+        <td>
+          <a class="btn btn-info" ng-click="view(claz)"><i class="glyphicon-eye-open glyphicon"></i> {{"common.view" | translate}}</a>
+          <a class="btn btn-warning" ng-click="edit(claz)"><i class="glyphicon-pencil glyphicon"></i> {{"common.edit" | translate}}</a>
+          <a class="btn btn-danger"  ng-click="delete(claz)"><i class="glyphicon-trash glyphicon"></i> {{"common.delete" | translate}}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+
+  <!-- add claz modal -->
+
+  <script type="text/ng-template" id="addModal" />
+   <div modal="entityAdd">
+      <div class="modal-header">
+          <h3>{{ "common.add" | translate }}{{ "common.one" | translate}}{{ modalName | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+          <div class="form-group">
+            <label for="inputArtic_number" class="col-sm-2 control-label">{{ "commodity.artic_number" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputArtic_number" required="required" ng-model="form.add.artic_number" name="inputArtic_number" placeholder='{{ "commodity.artic_number" | translate}}'  text-transform="uppercase">
+            </div>
+            <div class="col-sm-4">
+              <span style="color:red" ng-show="addForm.inputArtic_number.$dirty && addForm.inputArtic_number.$invalid">
+              <span ng-show="addForm.inputArtic_number.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "commodity.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.add.name" name="inputName" placeholder='{{ "commodity.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputVendors">{{ "commodity.vendors" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="vendors" id="inputVendors" class="form-control" ng-model="form.add.vendors" ng-options="a.key as a.value for a in vendors">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputCost">{{ "commodity.cost" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputCost" required="required" ng-model="form.add.cost" name="inputCost" placeholder='{{ "commodity.cost" | translate}}'>
+            </div>
+            <div class="col-sm-4">
+              <span style="color:red" ng-show="addForm.inputCost.$dirty && addForm.inputCost.$invalid">
+              <span ng-show="addForm.inputCost.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+              <span ng-show="addForm.inputCost.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputMarried">{{ "commodity.price" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputPrice" required="required" ng-model="form.add.price" name="inputPrice" placeholder='{{ "commodity.price" | translate}}'>
+            </div>
+            <div class="col-sm-4">
+              <span style="color:red" ng-show="addForm.inputPrice.$dirty && addForm.inputPrice.$invalid">
+              <span ng-show="addForm.inputPrice.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+              <span ng-show="addForm.inputPrice.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputConsumption">{{ "commodity.commodities" | translate}}</label>
+            <div class="col-sm-6 text-right">
+            <span class="hidden glyphicon-chevron-up glyphicon" ng-click="toUnfold();"></span><span class="glyphicon-chevron-down glyphicon" ng-click="toFold();"></span>
+            </div>
+          </div>
+          <div class="hidden form-group">
+            <label class="col-sm-2 control-label" ></label>
+            <div id="commodity_group" class="col-sm-6">
+                <div ng-repeat="commodity in form.add.commodities" id="commodity-{{$index}}" class="col-sm-12 form-group">
+                  <div class="col-sm-5">
+                    <select name="commodityType" id="commodityType[{{$index}}]" class="form-control" ng-model="commodity.model_type" ng-options="a.key as a.value for a in commodityTypes">
+                    </select>
+                  </div>
+                  <div class="col-sm-5">
+                    <input type="text" class="form-control" id="commoditySum" required="required" ng-model="commodity.sum" name="commoditySum" placeholder='{{ "commodity.sum" | translate}}'>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="btn btn-warning"  ng-click="deleteCommodity($index)">
+                    <i class="glyphicon-remove glyphicon"></i>
+                    </a>
+                  </div>
+                </div>
+                <div> <a class="btn btn-info" ng-click="addCommodity()"><i class="glyphicon-plus glyphicon"></i> </a>  </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-disabled="addForm.inputArtic_number.$dirty && addForm.inputArtic_number.$invalid || addForm.inputCost.$dirty && addForm.inputCost.$invalid || addForm.inputPrice.$dirty && addForm.inputPrice.$invalid" ng-click="addEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.add" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+   </div>
+  </script>
+
+  <!-- view contact modal -->
+  <script type="text/ng-template" id="viewModal" />
+    <div modal="entityView">
+      <div class="modal-header">
+          <h3>{{ entity.name }}</h3>
+      </div>
+      <div class="modal-body">
+        <dl class="dl-horizontal">
+          <dt>{{ modalId + ".artic_number" | translate | capitalise}}:</dt>
+            <dd>{{ entity.artic_number || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".name" | translate | capitalise}}:</dt>
+            <dd>{{ entity.name || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".vendors" | translate | capitalise}}:</dt>
+            <dd>{{ entity.vendors.name || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".cost" | translate | capitalise}}:</dt>
+            <dd>{{ entity.cost || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".price" | translate | capitalise}}:</dt>
+            <dd>{{ entity.price || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".commodities" | translate | capitalise}}:</dt>
+            <dd> <div ng-repeat="entity in entity.commodities">{{ entity.model_type}}:{{ entity.sum }}
+                  </div>
+            </dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-warning cancel" ng-click="close()">{{"common.close" | translate}}</button>
+      </div>
+    </div>
+  </script>
+
+  <!-- edit contact modal -->
+  <script type="text/ng-template" id="editModal" />
+    <div modal="entityEdit">
+      <div class="modal-header">
+          <h3>{{"common.edit" | translate}} - {{ name }}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm">
+          <div class="form-group">
+            <label for="inputArtic_number" class="col-sm-2 control-label">{{ "commodity.artic_number" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputArtic_number" required="required" ng-model="form.edit.artic_number" name="inputArtic_number" placeholder='{{ "commodity.artic_number" | translate}}'  text-transform="uppercase">
+            </div>
+            <div class="col-sm-4">
+              <span style="color:red" ng-show="editForm.inputArtic_number.$dirty && editForm.inputArtic_number.$invalid">
+              <span ng-show="editForm.inputArtic_number.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "commodity.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.edit.name" name="inputName" placeholder='{{ "commodity.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputVendors">{{ "commodity.vendors" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="vendors" id="inputVendors" class="form-control" ng-model="form.edit.vendors._id" ng-options="a.key as a.value for a in vendors">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputCost">{{ "commodity.cost" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputCost" required="required" ng-model="form.edit.cost" name="inputCost" placeholder='{{ "commodity.cost" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="editForm.inputCost.$dirty && editForm.inputCost.$invalid">
+              <span ng-show="editForm.inputCost.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+              <span ng-show="editForm.inputCost.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputPrice">{{ "commodity.price" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputPrice" required="required" ng-model="form.edit.price" name="inputPrice" placeholder='{{ "commodity.price" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="editForm.inputPrice.$dirty && editForm.inputPrice.$invalid">
+              <span ng-show="editForm.inputPrice.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+              <span ng-show="editForm.inputPrice.$error.required">{{ "validated.error.required" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputConsumption">{{ "commodity.commodities" | translate}}</label>
+            <div class="col-sm-6 text-right">
+            <span class="hidden glyphicon-chevron-up glyphicon" ng-click="toUnfold();"></span><span class="glyphicon-chevron-down glyphicon" ng-click="toFold();"></span>
+            </div>
+          </div>
+          <div class="hidden form-group">
+            <label class="col-sm-2 control-label" ></label>
+            <div id="commodity_group" class="col-sm-6">
+                <div ng-repeat="commodity in form.edit.commodities" id="commodity-{{$index}}" class="col-sm-12 form-group">
+                  <div class="col-sm-5">
+                    <select name="commodityType" id="commodityType[{{$index}}]" class="form-control" ng-model="commodity.model_type" ng-options="a.key as a.value for a in commodityTypes">
+                    </select>
+                  </div>
+                  <div class="col-sm-5">
+                    <input type="text" class="form-control" id="commoditySum" required="required" ng-model="commodity.sum" name="commoditySum" placeholder='{{ "commodity.sum" | translate}}'>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="btn btn-warning"  ng-click="deleteCommodity($index)">
+                    <i class="glyphicon-remove glyphicon"></i>
+                    </a>
+                  </div>
+                </div>
+                <div> <a class="btn btn-info" ng-click="addCommodity()"><i class="glyphicon-plus glyphicon"></i> </a>  </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-disabled="editForm.inputArtic_number.$dirty && editForm.inputArtic_number.$invalid || editForm.inputCost.$dirty && editForm.inputCost.$invalid || editForm.inputPrice.$dirty && editForm.inputPrice.$invalid" ng-click="editEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.edit" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+      </div>
+    </div>
+  </script>
+  <!-- delete contact modal -->
+  <script type="text/ng-template" id="deleteModal" />
+    <div modal="entityDelete">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{"common.confirm_to_delete" | translate}} {{ name }}?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger ok" ng-click="deleteEntity()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+    </div>
+  </script>

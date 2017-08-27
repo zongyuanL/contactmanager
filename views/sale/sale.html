@@ -1,0 +1,159 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<div modal="entityAdd">
+
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="saleForm"  name="saleForm">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "sale.memberInfo" | translate}}:</label>
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="form.record.memberPhone">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" ng-click="searchMember()" type="button">Go!</button>
+                  </span>
+                </div><!-- /input-group -->
+              </div><!-- /.col-sm-3 -->
+              <div class="col-sm-8">
+                <div ng-show="form.record.sale.member"><span><label class="col-sm-6 control-label" ><input type="text" class="hidden" ng-modal="form.record.sale.member._id">{{form.record.sale.member.name}} - {{form.record.sale.member.memberClass.name}} - {{form.record.sale.member.memberClass.discount}}</label></span></div>
+                <div ng-show="no_such_member"><span class="col-sm-6 control-label"><label>{{"common.noSuchMember" | translate | cfl }} -</label><a href="/s/member" style="color:red"> {{"common.add" | translate | cfl}}</a></span></div>
+              </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "sale.commodityList" | translate}}:</label>
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="text" class="form-control"  ng-model="form.record.commodityCode" text-transform="uppercase">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" ng-click="searchCommodity()" type="button">Go!</button>
+                  </span>
+                </div><!-- /input-group -->
+
+              </div><!-- /.col-sm-3 -->
+              <div class="col-sm-8">
+                <div><span><label class="col-sm-6 control-label"></label></span></div>
+              </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label"></label>
+            <div class="col-sm-6" ng-show="(form.record.sale.commodities.length +form.record.sale.freeCommodities.length)  >= 1">
+            <!--ng-show="commodities.length >= 0"-->
+              <table class="table table-hover" >
+                <thead>
+                  <tr>
+                    <th>{{ "sale.commodityName" | translate | cfl}}</th>
+                    <th>{{ "sale.commodityPrice" | translate | cfl}}</th>
+                    <th>{{ "sale.commodityQuantity" | translate | cfl}}</th>
+                    <th>{{ "sale.commoditySum" | translate | cfl}}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody ng-show="form.record.sale.commodities.length>= 1">
+                  <tr>
+                    <td><dfn>{{"sale.commodityList" | translate}}</dfn></td>
+                  </tr>
+                  <tr ng-repeat="c in form.record.sale.commodities" class="text-center">
+                      <td>{{ c.name+'('+ c.size +')' }}<input type="hidden" ng-model="c._id"></td>
+                      <td>{{ c.price || 0}} </td>
+                      <td><input style="width:50px; text-align: right"  type="text" ng-model="c.sum"></td>
+                      <td>{{ c.sum * c.price || '-'}}</td>
+                      <td>
+                        <i class="fa fa-hand-o-down" style="cursor: pointer; color: blue" ng-click="toFreeCommodity($index,c)"></i>
+                        <i class="fa fa-remove" style="cursor: pointer; color: red" ng-click="deleteCommodity($index)"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody ng-show="form.record.sale.freeCommodities.length>= 1">
+                  <tr>
+                    <td><dfn>{{"sale.freeCommodityList" | translate}}</dfn></td>
+                  </tr>
+                  <tr ng-repeat="c in form.record.sale.freeCommodities" class="text-center">
+                      <td>{{ c.name +'('+c.size+')'}}</td>
+                      <td>{{ c.price || 0}} </td>
+                      <td><input style="width:50px; text-align: right"  type="text" ng-model="c.sum"></td>
+                      <td>{{ c.sum * c.price || '-'}}</td>
+                      <td>
+                        <i class="fa fa-hand-o-up" style="cursor: pointer; color: blue" ng-click="toCommodity($index,c)"></i>
+                        <i class="fa fa-remove" style="cursor: pointer; color: red" ng-click="deleteFreeCommodity($index)"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "sale.summary" | translate}}:</label>
+              <div class="col-sm-6">
+                <table class="table table-hover text-right" >
+                  <tbody>
+                    <tr>
+                      <td>共计商品:<b style="color:red">{{ form.record.total_quantity}}</b>件--合计:<b style="color:red">{{ form.record.total_consumption}}</b>元</td>
+                    </tr>
+                    <tr>
+                      <td style="vertical-align: bottom">会员折扣[ <b style="color:red;vertical-align: bottom">{{form.record.sale.member.memberClass.discount || "-"}}</b> ]--活动[
+                      <label class="control checkbox"  ng-repeat="activity in activities|filter:{status:true}">
+                         <input type="checkbox" id="status_0" ng-model="form.record.selectedActivities[activity.code]" ng-click="changeActivity(activity)">
+                         <span class="checkbox-label"> {{activity.alias}}</span>
+                      </label>
+                      ]--调整<input style="width:50px; text-align: right; color:red; font-weight: bold;"  type="text" ng-model="form.record.sale.adjust">元</td>
+                    </tr>
+                    <tr>
+                      <td><b style="color:red">{{giftMessage}}</b>最终合计<b style="color:red">{{ form.record.total_sum}}</b>元</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "sale.payment" | translate}}:</label>
+            <div class="col-sm-6">
+              <label class="control checkbox"  ng-repeat="payment in payments">
+                 <input type="checkbox" id="status_0" ng-model="form.record.payments[payment.key]">
+                 <span class="checkbox-label"> {{payment.value}}</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "sale.backup" | translate}}:</label>
+            <div class="col-sm-6">
+                <textarea type="text" class="form-control"  ng-model="form.record.backup">
+                </textarea>
+            </div><!-- /.col-sm-3 -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-click="sale()" class="btn btn-success"><i class="icon-plus icon-white"></i> {{"common.confirm" | translate}}</button>
+          <button class="btn btn-warning reset" ng-click="reset()">{{"common.reset" | translate}}</button>
+      </div>
+   </div>
+
+  <script type="text/ng-template" id="messageModal" />
+    <div modal="entityMessage">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{ message }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning cancel" ng-click="closeMessage()">{{"common.cancel" | translate}}</button>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="addCommodityModal" />
+    <div modal="entityAddCommodity">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{ message }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger ok" ng-click="saleDirectly()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-danger ok" ng-click="addCommodity()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-warning cancel" ng-click="closeMessage()">{{"common.cancel" | translate}}</button>
+      </div>
+    </div>
+  </script>

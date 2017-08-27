@@ -1,0 +1,162 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<!--
+<ul class="inline">
+  <li ng-if="resuletList.length == 0">{{"memberClass.list" | translate}}{{"common.empty" | translate}}.</li>
+  <li ng-if="resuletList.length >= 0">{{"memberClass.list" | translate}}:{{resuletList.length}}.</li>
+</ul>
+-->
+    <div class="col-sm-3 col-xs-12 col-lg-3">
+      <form class="form-search">
+          <div class="input-group">
+              <input type="text" class="form-control " placeholder='{{"common.search" | translate}}...' ng-model="query">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-search">{{"common.search" | translate}}</button>
+              </span>
+          </div>
+      </form>
+    </div>
+<table class="table table-hover" ng-show="resuletList.length >= 1" >
+  <thead>
+    <tr>
+      <th ng-repeat="header in headers"><a ng-click="columnSort.sortColumn=headers[$index];columnSort.reverse=!columnSort.reverse">{{ headers[$index] | translate | capitalise }}</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="entity in resuletList |  orderBy:columnSort.sortColumn:columnSort.reverse | filter: query">
+        <td>{{ entity.name }}</td>
+        <td>{{ entity.code }}</td>
+        <td>{{ entity.phone }} </td>
+        <td class="col-sm-2">{{ entity.address}}</td>
+        <td>
+          <a class="btn btn-info" ng-click="view(entity)"><i class="glyphicon-eye-open glyphicon"></i> {{"common.view" | translate}}</a>
+          <a class="btn btn-warning" ng-click="edit(entity)"><i class="glyphicon-pencil glyphicon"></i> {{"common.edit" | translate}}</a>
+          <a class="btn btn-danger"  ng-click="delete(entity)"><i class="glyphicon-trash glyphicon"></i> {{"common.delete" | translate}}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+
+  <!-- add claz modal -->
+
+  <script type="text/ng-template" id="addModal" />
+   <div modal="entityAdd">
+      <div class="modal-header">
+          <h3>{{ "common.add" | translate }}{{ "common.one" | translate}}{{ modalName | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "vendors.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.add.name" name="inputPhone" placeholder='{{ "vendors.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputCode" class="col-sm-2 control-label">{{ "vendors.code" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputCode" required="required" ng-model="form.add.code" name="inputCode" placeholder='{{ "vendors.code" | translate}}'  text-transform="uppercase">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPhone" class="col-sm-2 control-label">{{ "vendors.phone" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputPhone" required="required" ng-model="form.add.phone" name="inputPhone" placeholder='{{ "vendors.phone" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputAddress" class="col-sm-2 control-label">{{ "vendors.address" | translate}}</label>
+            <div class="col-sm-6">
+              <textarea type="text" class="form-control" id="inputAddress" required="required" ng-model="form.add.address" name="inputAddress" placeholder='{{ "vendors.address" | translate}}'></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-click="addEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.add" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+   </div>
+  </script>
+
+  <!-- view contact modal -->
+  <script type="text/ng-template" id="viewModal" />
+    <div modal="entityView">
+      <div class="modal-header">
+          <h3>{{ entity.name }}</h3>
+      </div>
+      <div class="modal-body">
+        <dl class="dl-horizontal">
+          <dt>{{ modalId + ".name" | translate | capitalise}}:</dt>
+            <dd>{{ entity.name || " - " }}</dd>
+          <dt>{{ modalId + ".code" | translate | capitalise}}:</dt>
+            <dd>{{ entity.code || " - " }}</dd>
+          <dt>{{ modalId + ".phone" | translate | capitalise}}:</dt>
+            <dd>{{ entity.phone || " - " }}</dd>
+          <dt>{{ modalId + ".address" | translate | capitalise}}:</dt>
+            <dd>{{ entity.address || " - " }}</dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-warning cancel" ng-click="close()">{{"common.close" | translate}}</button>
+      </div>
+    </div>
+  </script>
+
+  <!-- edit contact modal -->
+  <script type="text/ng-template" id="editModal" />
+    <div modal="entityEdit">
+      <div class="modal-header">
+          <h3>{{"common.edit" | translate}} - {{ name }}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="editForm">
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "vendors.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.edit.name" name="inputName" placeholder='{{ "vendors.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputCode" class="col-sm-2 control-label">{{ "vendors.code" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputCode" required="required" ng-model="form.edit.code" name="inputCode" placeholder='{{ "vendors.code" | translate}}'  text-transform="uppercase">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPhone" class="col-sm-2 control-label">{{ "vendors.phone" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputPhone" required="required" ng-model="form.edit.phone" name="inputPhone" placeholder='{{ "vendors.phone" | translate}}'>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputAddress" class="col-sm-2 control-label">{{ "vendors.address" | translate}}</label>
+            <div class="col-sm-6">
+              <textarea type="text" class="form-control" id="inputAddress" required="required" ng-model="form.edit.address" name="inputAddress" placeholder='{{ "vendors.address" | translate}}'></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-click="editEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.edit" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+      </div>
+    </div>
+  </script>
+  <!-- delete contact modal -->
+  <script type="text/ng-template" id="deleteModal" />
+    <div modal="entityDelete">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{"common.confirm_to_delete" | translate}} {{ name }}?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger ok" ng-click="deleteEntity()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+    </div>
+  </script>

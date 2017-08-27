@@ -1,0 +1,20 @@
+{
+  "name": "contact",
+  "version": "0.0.1",
+  "description": "MEAN Contact Manager",
+  "main": "app.js",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "ejs": "~2.5.7",
+    "express": "~3.4.8",
+    "mongoose": "^4.11.5",
+    "monk": "^6.0.3",
+    "shrinkwrap": "~0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rex Liang",
+  "license": "free"
+}

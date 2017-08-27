@@ -1,0 +1,278 @@
+<p ng-show="showMessage"> {{ message }}</p>
+<!--
+<ul class="inline">
+  <li ng-if="resuletList.length == 0">{{"memberClass.list" | translate}}{{"common.empty" | translate}}.</li>
+  <li ng-if="resuletList.length >= 0">{{"memberClass.list" | translate}}:{{resuletList.length}}.</li>
+</ul>
+-->
+    <div class="col-sm-3 col-xs-12 col-lg-3">
+      <form class="form-search">
+          <div class="input-group">
+              <input type="text" class="form-control " placeholder='{{"common.search" | translate}}...' ng-model="query">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn btn-search">{{"common.search" | translate}}</button>
+              </span>
+          </div>
+      </form>
+    </div>
+<table class="table table-hover" ng-show="resuletList.length >= 1" >
+  <thead>
+    <tr>
+      <th ng-repeat="header in headers"><a ng-click="columnSort.sortColumn=headers[$index];columnSort.reverse=!columnSort.reverse">{{ headers[$index] | translate | capitalise }}</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="claz in resuletList |  orderBy:columnSort.sortColumn:columnSort.reverse | filter: query">
+        <td>{{ claz.phone }}</td>
+        <td>{{ claz.name }} </td>
+        <td>{{ claz.memberClass.name}}</td>
+        <td>
+          <a class="btn btn-info" ng-click="view(claz)"><i class="glyphicon-eye-open glyphicon"></i> {{"common.view" | translate}}</a>
+          <a class="btn btn-warning" ng-click="edit(claz)"><i class="glyphicon-pencil glyphicon"></i> {{"common.edit" | translate}}</a>
+          <a class="btn btn-danger"  ng-click="delete(claz)"><i class="glyphicon-trash glyphicon"></i> {{"common.delete" | translate}}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+
+  <!-- add claz modal -->
+
+  <script type="text/ng-template" id="addModal" />
+   <div modal="entityAdd">
+      <div class="modal-header">
+          <h3>{{ "common.add" | translate }}{{ "common.one" | translate}}{{ modalName | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+          <div class="form-group">
+            <label for="inputPhone" class="col-sm-2 control-label">{{ "member.phone" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputPhone" required="required" ng-model="form.add.phone" name="inputPhone" placeholder='{{ "member.phone" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="addForm.inputPhone.$dirty && addForm.inputPhone.$invalid">
+              <span ng-show="addForm.inputPhone.$error.required">{{ "validated.error.required" | translate | cfl }}</span>
+              <span ng-show="addForm.inputPhone.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "member.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.add.name" name="inputName" placeholder='{{ "member.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputGender">{{ "member.gender" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="gender" id="inputGender" class="form-control" ng-model="form.add.gender" ng-options="a.key as a.value for a in genders">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputMarried">{{ "member.married" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="married" id="inputMarried" class="form-control" ng-model="form.add.married" ng-options="a.key as a.value for a in marrieds">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputChildren">{{ "member.children" | translate}}</label>
+            <div class="col-sm-6 text-right">
+            <span class="hidden glyphicon-chevron-up glyphicon" ng-click="toUnfold();"></span><span class="glyphicon-chevron-down glyphicon" ng-click="toFold();"></span>
+            </div>
+          </div>
+          <div class="hidden form-group">
+            <label class="col-sm-2 control-label" ></label>
+            <div id="children_group" class="col-sm-6">
+                <div ng-repeat="child in form.add.children" id="children-{{$index}}" class="col-sm-12 form-group">
+                  <div class="col-xs-4 col-sm-5">
+                    <select name="childGender" id="childGender[{{$index}}]" class="form-control" ng-model="child.gender" ng-options="a.key as a.value for a in genders4children">
+                    </select>
+                  </div>
+                  <div class="col-xs-4 col-sm-5">
+                    <select name="childAge" id="childAge[{{$index}}]" class="form-control" ng-model="child.age" ng-options="a.key as a.value for a in ages4children">
+                    </select>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="btn btn-warning"  ng-click="deleteChild($index)">
+                    <i class="glyphicon-remove glyphicon"></i>
+                    </a>
+                  </div>
+                </div>
+                <div data-child-count="1"> <a class="btn btn-info" ng-click="addChild()"><i class="glyphicon-plus glyphicon"></i> </a>  </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputClass">{{ "member.memberClass" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="inputClass" id="inputClass" class="form-control" ng-model="form.add.memberClass" ng-options="a.id as a.name  for a in memberClasses">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputConsumption" class="col-sm-2 control-label">{{ "member.consumption" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputConsumption" ng-model="form.add.consumption" name="inputConsumption" placeholder='{{ "member.consumption" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="addForm.inputConsumption.$dirty && addForm.inputConsumption.$invalid">
+              <span ng-show="addForm.inputConsumption.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-disabled="addForm.inputConsumption.$dirty && addForm.inputConsumption.$invalid || addForm.inputPhone.$dirty && addForm.inputPhone.$invalid" ng-click="addEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.add" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+   </div>
+  </script>
+
+  <!-- view contact modal -->
+  <script type="text/ng-template" id="viewModal" />
+    <div modal="entityView">
+      <div class="modal-header">
+          <h3>{{ entity.name }}</h3>
+      </div>
+      <div class="modal-body">
+        <dl class="dl-horizontal">
+          <dt>{{ modalId + ".phone" | translate | capitalise}}:</dt>
+            <dd>{{ entity["phone"] || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".name" | translate | capitalise}}:</dt>
+            <dd>{{ entity.name || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".gender" | translate | capitalise}}:</dt>
+            <dd>{{ "common." + (entity.gender || " - " | lower) |  translate }}</dd>
+          <dt>{{ modalId + ".married" | translate | capitalise}}:</dt>
+            <dd ng-if="entity.married==true">{{ "common.married" || " - " | translate | capitalise }}</dd>
+            <dd ng-if="entity.married==false">{{ "common.unmarried" || " - " | translate | capitalise }}</dd>
+            <dd ng-if="entity.married!=false && entity.married!=true">{{ entity.married || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".memberClass" | translate | capitalise}}:</dt>
+            <dd>{{ entity.memberClass.name || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".consumption" | translate | capitalise}}:</dt>
+            <dd>{{ entity.consumption || " - " | translate | capitalise }}</dd>
+          <dt>{{ modalId + ".children" | translate | capitalise}}:</dt>
+            <dd> <div ng-repeat="claz in entity.children">{{ claz.name}}{{ "common." + (claz.gender | lower) | translate}}-{{ claz.age }}{{"common.age" | translate | capitalise}}
+                  </div>
+            </dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-warning cancel" ng-click="close()">{{"common.close" | translate}}</button>
+      </div>
+    </div>
+  </script>
+
+  <!-- edit contact modal -->
+  <script type="text/ng-template" id="editModal" />
+    <div modal="entityEdit">
+      <div class="modal-header">
+          <h3>{{"common.edit" | translate}} - {{ name }}</h3>
+      </div>
+      <div class="modal-body">
+        <form role="form" class="form-horizontal" ng-model="addForm" name="editForm">
+          <div class="form-group">
+            <label for="inputPhone" class="col-sm-2 control-label">{{ "member.phone" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="inputPhone" required="required" ng-model="form.edit.phone" name="inputPhone" placeholder='{{ "member.phone" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="editModal.inputPhone.$dirty && editModal.inputPhone.$invalid">
+              <span ng-show="editModal.inputPhone.$error.required">{{ "validated.error.required" | translate | cfl }}</span>
+              <span ng-show="editModal.inputPhone.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">{{ "member.name" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputName" required="required" ng-model="form.edit.name" name="inputName" placeholder='{{ "member.name" | translate}}'>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputGender">{{ "member.gender" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="gender" id="inputGender" class="form-control" ng-model="form.edit.gender" ng-options="a.key as a.value for a in genders">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputMarried">{{ "member.married" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="married" id="inputMarried" class="form-control" ng-model="form.edit.married" ng-options="a.key as a.value for a in marrieds">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="inputClass">{{ "member.memberClass" | translate}}</label>
+            <div class="col-sm-6">
+              <select name="inputClass" id="inputClass" class="form-control" ng-model="form.edit.memberClass._id" ng-options="a.id as a.name  for a in memberClasses">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="inputChildren">{{ "member.children" | translate}}</label>
+            <div class="col-sm-6 text-right">
+            <span class="hidden glyphicon-chevron-up glyphicon" ng-click="toUnfold();"></span><span class="glyphicon-chevron-down glyphicon" ng-click="toFold();"></span>
+            </div>
+          </div>
+          <div class="hidden form-group">
+            <label class="col-sm-2 control-label" ></label>
+            <div id="children_group" class="col-sm-6">
+
+                <div ng-repeat="child in form.edit.children" id="children-{{$index}}" class="col-sm-12 form-group">
+                  <div class="col-xs-4 col-sm-5">
+                    <select name="childGender" id="childGender[{{$index}}]" class="form-control" ng-model="child.gender" ng-options="a.key as a.value for a in genders4children">
+                    </select>
+                  </div>
+                  <div class="col-xs-4 col-sm-5">
+                    <select name="childAge" id="childAge[{{$index}}]" class="form-control" ng-model="child.age" ng-options="a.key as a.value for a in ages4children">
+                    </select>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="btn btn-warning"  ng-click="deleteChild()">
+                    <i class="glyphicon-remove glyphicon"></i>
+                    </a>
+                  </div>
+                </div>
+                <div data-child-count="{{form.edit.children.length}}"> <a class="btn btn-info" ng-click="addChild()"><i class="glyphicon-plus glyphicon"></i> </a>  </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="inputConsumption" class="col-sm-2 control-label">{{ "member.consumption" | translate}}</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" id="inputConsumption" required="required" ng-model="form.edit.consumption" name="inputName" placeholder='{{ "member.consumption" | translate}}'>
+            </div>
+            <div class="col-sm-4" class="text-center">
+              <span style="color:red" ng-show="editForm.inputConsumption.$dirty && editForm.inputConsumption.$invalid">
+              <span ng-show="editForm.inputConsumption.$error.number">{{ "validated.error.number" | translate | cfl}}</span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button ng-disabled="editForm.inputConsumption.$dirty && editForm.inputConsumption.$invalid || editForm.inputPhone.$dirty && editForm.inputPhone.$invalid" ng-click="editEntity()" class="btn btn-info"><i class="icon-plus icon-white"></i> {{"common.edit" | translate}}</button>
+          <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+      </div>
+    </div>
+  </script>
+  <!-- delete contact modal -->
+  <script type="text/ng-template" id="deleteModal" />
+    <div modal="entityDelete">
+      <div class="modal-header">
+          <h3>{{"common.confirm" | translate}}</h3>
+      </div>
+      <div class="modal-body">
+        {{"common.confirm_to_delete" | translate}} {{ name }}?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger ok" ng-click="deleteEntity()">{{"common.confirm" | translate}}</button>
+        <button class="btn btn-warning cancel" ng-click="cancel()">{{"common.cancel" | translate}}</button>
+      </div>
+    </div>
+  </script>
