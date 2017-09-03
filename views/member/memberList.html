@@ -44,7 +44,7 @@
           <h3>{{ "common.add" | translate }}{{ "common.one" | translate}}{{ modalName | translate}}</h3>
       </div>
       <div class="modal-body">
-        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm">
+        <form role="form" class="form-horizontal" ng-model="addForm"  name="addForm" novalidate>
           <div class="form-group">
             <label for="inputPhone" class="col-sm-2 control-label">{{ "member.phone" | translate}}</label>
             <div class="col-sm-6">
@@ -171,7 +171,7 @@
           <h3>{{"common.edit" | translate}} - {{ name }}</h3>
       </div>
       <div class="modal-body">
-        <form role="form" class="form-horizontal" ng-model="addForm" name="editForm">
+        <form role="form" class="form-horizontal" ng-model="addForm" name="editForm" novalidate>
           <div class="form-group">
             <label for="inputPhone" class="col-sm-2 control-label">{{ "member.phone" | translate}}</label>
             <div class="col-sm-6">
