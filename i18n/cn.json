@@ -102,7 +102,7 @@
     "sale.payment" : "支付方式",
     "sale.backup" : "备注信息",
     "sale.success" : "销售成功.",
-    "sale.backup" : "销售失败,请修正以后再提交.",
+    "sale.failed" : "销售失败,请修正以后再提交.",
     "sale.giftOver" : "赠品数量超过活动数量",
     "sale.no_such_commodity" : "没有这个商品",
     "sale.question_to_sale" : "是否继续销售?",

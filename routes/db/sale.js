@@ -45,28 +45,6 @@ exports.find = function(req, res) {
     }).populate('memberClass');
   }
 };
-// var SalesRecordSchema = new Schema({
-//     commodities: [SaleCommoditySchema],
-//     freeCommodities: [SaleCommoditySchema],
-//     member_id: {type:Schema.Types.ObjectId, ref: 'Member' },
-//     sales_date: {
-//         type: Date,
-//         default:Date.now},
-//     member_discount: {type: Number},
-//     activity_discount: {type: Number},
-//     activity_discount_price: {type: Number},
-//     adjust: {type: Number},
-//     final_price: {type: Number},
-//     payment:[{type:String}],
-//     backup:{Type: String}
-// });
-
-// var SaleCommoditySchema = new Schema({
-//     commodity_id: {type:Schema.Types.ObjectId, ref: 'Commodity' },
-//     quanity:{type: Number},
-//     price:{type: Number}
-// });
-
 
 exports.add = function(req, res) {
     var record=req.body,
@@ -78,7 +56,7 @@ exports.add = function(req, res) {
         activity_discount = saleInfo.discountRatio,
         activity_discount_price = saleInfo.discountMoney,
         adjust = saleInfo.adjust,
-        final_price = record.total_sum,
+        final_price = record.total_sum.toFixed(2),
         payments = record.payments,
         backup = record.backup,
         member_id ,
@@ -146,26 +124,17 @@ exports.add = function(req, res) {
     }).then(function(){
       var doc = result.doc;
       if(member){
-        // console.log(member);
-        // console.log("++++++++++++++++++++");
-        // console.log(doc);
         return db.MemberModel.update({_id:mongoose.Types.ObjectId(doc.member_id)},{$inc:{'consumption': doc.final_price}});
 
-      // db.MemberModel.findById(member._id, function (err, entity) {
-      //     entity.consumption = doc.final_price;
-      //     entity.save(function (err) {
-      //       if (!err) {
-      //         console.log("success");
-      //         res.json(true);
-      //       } else {
-      //         console.log(err);
-      //         res.json(false);
-      //       }
-      //     });
-      //   });
       }
+    }).then(function(){
+      res.json(true);
     })
-    .catch(console.log.bind(console));
+    .catch(function(){
+      res.json(false);
+    });
+
+
 };
 
 exports.edit = function (req, res) {

@@ -14,7 +14,7 @@
                 </div><!-- /input-group -->
               </div><!-- /.col-sm-3 -->
               <div class="col-sm-8">
-                <div ng-show="form.record.sale.member"><span><label class="col-sm-6 control-label" ><input type="text" class="hidden" ng-modal="form.record.sale.member._id">{{form.record.sale.member.name}} - {{form.record.sale.member.memberClass.name}} - {{form.record.sale.member.memberClass.discount}}</label></span></div>
+                <div ng-show="form.record.sale.member"><span><label class="col-sm-6 control-label" ><input type="text" class="hidden" ng-modal="form.record.sale.member._id">{{form.record.sale.member.name}} - {{form.record.sale.member.memberClass.name}} - {{form.record.sale.member.memberClass.discount}}<i class="fa fa-remove" style="cursor: pointer; color: red" ng-click="removeMember()"></i></label></span></div>
                 <div ng-show="no_such_member"><span class="col-sm-6 control-label"><label>{{"common.noSuchMember" | translate | cfl }} -</label><a href="/s/member" style="color:red"> {{"common.add" | translate | cfl}}</a></span></div>
               </div>
           </div>
@@ -30,7 +30,7 @@
 
               </div><!-- /.col-sm-3 -->
               <div class="col-sm-8">
-                <div><span><label class="col-sm-6 control-label">{{form.record.commodityCode}}</label></span></div>
+                <div><span><label class="col-sm-6 control-label"></label></span></div>
               </div>
           </div>
           <div class="form-group">
@@ -98,7 +98,7 @@
                       ]--调整<input style="width:50px; text-align: right; color:red; font-weight: bold;"  type="text" ng-model="form.record.sale.adjust">元</td>
                     </tr>
                     <tr>
-                      <td><b style="color:red">{{giftMessage}}</b>最终合计<b style="color:red">{{ form.record.total_sum}}</b>元</td>
+                      <td><b style="color:red">{{giftMessage}}</b>最终合计<b style="color:red">{{ form.record.total_sum | number:2}}</b>元</td>
                     </tr>
                   </tbody>
                 </table>
@@ -137,7 +137,7 @@
         {{ message }}
       </div>
       <div class="modal-footer">
-        <button class="btn btn-warning cancel" ng-click="closeMessage()">{{"common.cancel" | translate}}</button>
+        <button class="btn btn-warning ok" ng-click="closeMessage()">{{"common.ok" | translate}}</button>
       </div>
     </div>
   </script>

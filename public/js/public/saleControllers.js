@@ -118,7 +118,7 @@ function SaleCtrl($scope, $http, $modal, $location, $translate, $compile, T, com
         saleInfo = record.sale;
     commonFactory.add(modalId, record).then(function(res) {
       var message = "";
-      if(res){
+      if(res.data){
           message = T.T("sale.success");
           initFormData($scope);
       }else{
@@ -138,6 +138,10 @@ function SaleCtrl($scope, $http, $modal, $location, $translate, $compile, T, com
 
   $scope.reset = function(){
       initFormData($scope);
+  };
+  $scope.removeMember = function () {
+    $scope.form.record.memberPhone = null;
+    $scope.form.record.sale.member = null;
   };
 
   $scope.deleteCommodity = function(idx){
