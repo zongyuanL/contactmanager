@@ -27,7 +27,7 @@
         <td>{{ claz.name }} </td>
         <td>{{ claz.vendors.name}}</td>
         <td>{{ claz.price}}</td>
-        <td>
+        <td ng-if="isAuth();" >
           <a class="btn btn-info" ng-click="view(claz)"><i class="glyphicon-eye-open glyphicon"></i> {{"common.view" | translate}}</a>
           <a class="btn btn-warning" ng-click="edit(claz)"><i class="glyphicon-pencil glyphicon"></i> {{"common.edit" | translate}}</a>
           <a class="btn btn-danger"  ng-click="delete(claz)"><i class="glyphicon-trash glyphicon"></i> {{"common.delete" | translate}}</a>
@@ -35,7 +35,9 @@
       </tr>
     </tbody>
   </table>
-  <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+  <div ng-if="isAuth();" >
+    <a class="btn btn-info" ng-click="add()"><i class="glyphicon-plus glyphicon"></i> </a>
+  </div>
 
   <!-- add claz modal -->
 
@@ -133,7 +135,7 @@
           <h3>{{ entity.name }}</h3>
       </div>
       <div class="modal-body">
-        <dl class="dl-horizontal">
+        <dl class="dl-horizontal" >
           <dt>{{ modalId + ".artic_number" | translate | capitalise}}:</dt>
             <dd>{{ entity.artic_number || " - " | translate | capitalise }}</dd>
           <dt>{{ modalId + ".name" | translate | capitalise}}:</dt>
@@ -187,7 +189,7 @@
               </select>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group" >
             <label class="control-label col-sm-2" for="inputCost">{{ "commodity.cost" | translate}}</label>
             <div class="col-sm-6">
               <input type="number" class="form-control" id="inputCost" required="required" ng-model="form.edit.cost" name="inputCost" placeholder='{{ "commodity.cost" | translate}}'>

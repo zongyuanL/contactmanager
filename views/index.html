@@ -21,9 +21,11 @@
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="container" ng-controller="baseCtrl">
       <div>
         <h1><a href="/">{{"project.name" | translate}}</a></h1>
+        <h4 ng-if="!isAuth()"><a href="/s/login">登录</a></h4>
+        <h4 ng-if="isAuth()"><a ng-click="logout()">退出</a></h4>
       </div>
       <div ng-view></div>
     </div><!-- end of container -->
@@ -41,6 +43,7 @@
     <script src="js/public/commonControllers.js"></script>
     <script src="js/public/activityControllers.js"></script>
     <script src="js/public/saleControllers.js"></script>
+    <script src="js/public/loginController.js"></script>
     <script src="js/factory.js"></script>
     <script src="js/filters.js"></script>
 

@@ -1,6 +1,10 @@
 {
     "project.name" : "Dreaming 店铺管理系统",
 
+    "um.name" : "账号",
+    "um.password" : "密码",
+    "um.logIn" : "登录",
+
     "modalName.member" : "会员",
     "modalName.memberClass" : "等级",
     "modalName.vendors" : "供应商",

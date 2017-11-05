@@ -38,3 +38,24 @@ angular.module("T", []).
     }
     return T;
 }]);
+
+angular.module("UmService", []).
+  factory('UserService', ['$http', function($http) {
+    return {
+        logIn: function(username, password) {
+            return $http.post('/api/login', {username: username, password: password});
+        },
+
+        logOut: function() {
+
+        }
+    }
+}]).
+  factory('AuthenticationService', function() {
+    var auth = {
+        isLogged: false
+    }
+
+    return auth;
+});
+

@@ -33,6 +33,17 @@ var MemberModel = mongoose.model('Member', MemberSchema);
 exports.MemberModel = MemberModel;
 
 
+var AccountSchema = new Schema({
+    userName:{type:String, unique: true, require: true},
+    name:{type:String},
+    password:{type:String, require: true},
+    type:{type:String}
+
+});
+var AccountModel = mongoose.model('Account', AccountSchema);
+exports.AccountModel = AccountModel;
+
+
 var MemberClassSchema= new Schema({
     name: { type: String,  unique: true, require: true },
     required_sum_of_consumption: { type: Number},
@@ -113,6 +124,26 @@ var SalesRecordSchema = new Schema({
 var SalesRecordModel =  mongoose.model('SalesRecord', SalesRecordSchema);
 exports.SalesRecordModel = SalesRecordModel;
 
+AccountModel.count(function(err, res){
+  console.log("Start to initial admin");
+  if(res>=1){
+  console.log("Already initial admin");
+    return;
+  }
+
+  var entity = new AccountModel({
+    userName: 'admin',
+    name: '系统管理员',
+    password: 'sa123',
+    type: 'admin'
+  });
+  entity.save(function(err){
+    if(err){
+      console.log("Failed to initial admin");
+    }
+  })
+
+});
 
 ActivityModel.count(function(err, res){
   console.log("Start to initial Activities");

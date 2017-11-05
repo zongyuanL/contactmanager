@@ -8,6 +8,7 @@ var express = require('express'),
     vendors = require('./routes/db/vendors'),
     member = require('./routes/db/member'),
     memberClass = require('./routes/db/memberClass'),
+    login = require('./routes/db/login'),
    // dbModel = require('./routes/db/schema'),
     server = require('http').createServer(app);
 
@@ -74,6 +75,8 @@ app.put('/api/activity/:id', activity.edit); //edit&update contact
 app.get('/api/sale', sale.records); //look at all
 app.get('/api/sale/:id', sale.record); //look at one
 app.post('/api/sale', sale.add); //add contact
+
+app.post('/api/login',login.login);
 
 
 // app.get('/api/:nodalName', function(){

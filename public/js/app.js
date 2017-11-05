@@ -1,4 +1,4 @@
-angular.module('contacts', ['pascalprecht.translate', 'ngRoute', 'common.factory', 'T', 'contacts.filters', 'ui.bootstrap']).
+angular.module('contacts', ['pascalprecht.translate', 'ngRoute', 'common.factory', 'T', 'UmService', 'contacts.filters', 'ui.bootstrap']).
   config(['$qProvider', '$routeProvider', '$locationProvider', '$translateProvider', function($qProvider, $routeProvider, $locationProvider, $translateProvider) {
     var lang = window.localStorage.lang||'cn';
     // $translateProvider.translations('en',i18n_en);
@@ -12,6 +12,10 @@ angular.module('contacts', ['pascalprecht.translate', 'ngRoute', 'common.factory
     $routeProvider.
       when('/', {
         templateUrl: '/p/home',
+      }).
+      when('/s/login', {
+        templateUrl: '/p/login',
+        controller: LoginCtrl,
       }).
       when('/s/memberClass', {
         templateUrl: '/s/member/classList',
@@ -69,4 +73,18 @@ angular.module('contacts', ['pascalprecht.translate', 'ngRoute', 'common.factory
         }
       }
     };
+  }).controller('baseCtrl',function($scope){
+    $scope.isAuth = function (){
+      return sessionStorage.token == 'admin';
+
+    }
+
+    $scope.logout = function logout() {
+           // if (AuthenticationService.isLogged) {
+           //     AuthenticationService.isLogged = false;
+                delete sessionStorage.token;
+                $location.path("/p/home");
+            //}
+    }
+
   });

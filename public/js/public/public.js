@@ -18,9 +18,10 @@ var HEADER_ARRAY = {
     "short":["activity.name","activity.description","activity.can_repeate","activity.can_duplicated","common.status"],
       "all":["activity.name","activity.description","activity.can_repeate","activity.can_duplicated","common.status"]},
 };
-var COMMODITY_ARTIC_NUMBER_LENGTH = 8;
+
+var COMMODITY_ARTIC_NUMBER_LENGTH = 10;
 var VENDORS_CODE_LENGTH = 4;
-var ARTIC_NUMBER_LENGTH = 4;
+var ARTIC_NUMBER_LENGTH = 6;
 var TYPE_LENGTH = 2;
 function setScope($scope,T, commonFactory, modalId){
     $scope.modalId = modalId;
